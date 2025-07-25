@@ -1,76 +1,22 @@
-#ifndef __CARD_MODEL_H__
-#define __CARD_MODEL_H__
-
-#include <string>
-
-// 花色类型
-enum CardSuitType
-{
-    CST_NONE = -1,
-    CST_CLUBS,      // 梅花
-    CST_DIAMONDS,   // 方块
-    CST_HEARTS,     // 红桃
-    CST_SPADES,     // 黑桃
-    CST_NUM_CARD_SUIT_TYPES
-};
-
-// 正面类型
-enum CardFaceType
-{
-    CFT_NONE = -1,
-    CFT_ACE,
-    CFT_TWO,
-    CFT_THREE,
-    CFT_FOUR,
-    CFT_FIVE,
-    CFT_SIX,
-    CFT_SEVEN,
-    CFT_EIGHT,
-    CFT_NINE,
-    CFT_TEN,
-    CFT_JACK,
-    CFT_QUEEN,
-    CFT_KING,
-    CFT_NUM_CARD_FACE_TYPES
-};
-
-enum class CardSuit {
-    HEART,
-    DIAMOND,
-    CLUB,
-    SPADE,
-    NONE
-};
-
-enum class CardState {
-    COVERED,    // 盖着的
-    REVEALED,   // 翻开的
-    MATCHED,    // 已匹配消除
-    INVALID
-};
+#pragma once
+#include "configs/models/CardResConfig.h"
+#include "cocos2d.h"
 
 class CardModel {
 public:
-    CardModel(int id, int number, CardSuit suit);
+    CardModel(CardFaceType face, CardSuitType suit, const cocos2d::Vec2& position);
 
-    int getId() const { return _id; }
-    int getNumber() const { return _number; }
-    CardSuit getSuit() const { return _suit; }
-    CardState getState() const { return _state; }
+    CardFaceType getFace() const { return _face; }
+    CardSuitType getSuit() const { return _suit; }
+    cocos2d::Vec2 getPosition() const { return _position; }
+    bool isRedSuit() const {
+        return _suit == CardSuitType::CST_HEARTS || _suit == CardSuitType::CST_DIAMONDS;
+    }
 
-    void setState(CardState state) { _state = state; }
-
-    bool isRevealed() const { return _state == CardState::REVEALED; }
-    bool isMatched() const { return _state == CardState::MATCHED; }
-    bool isCovered() const { return _state == CardState::COVERED; }
-
-    std::string getResourceName() const;
+    void setPosition(const cocos2d::Vec2& position) { _position = position; }
 
 private:
-    int _id;
-    int _number;    // 1-13 (A-K)
-    CardSuit _suit;
-    CardState _state = CardState::COVERED;
+    CardFaceType _face;
+    CardSuitType _suit;
+    cocos2d::Vec2 _position;
 };
-
-#endif // __CARD_MODEL_H__

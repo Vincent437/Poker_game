@@ -1,32 +1,26 @@
-#ifndef __LEVEL_CONFIG_H__
-#define __LEVEL_CONFIG_H__
-
+#pragma once
 #include <vector>
 #include <string>
+#include "cocos2d.h"
 
-struct CardInitData {
-    int id;
-    int number;
-    int suit;  // 0-3对应CardSuit枚举
-    int initialState; // 0-covered, 1-revealed
-    float x;   // 添加位置信息
-    float y;
+// 卡牌位置信息
+struct CardPosition {
+    int x;
+    int y;
 };
 
+// 卡牌配置数据
+struct CardConfig {
+    int CardFace;  // 牌面数字（如 0=A, 1=2, ..., 12=K）
+    int CardSuit;  // 花色（0=梅花, 1=方块, 2=红桃, 3=黑桃）
+    CardPosition Position;
+};
+
+// 关卡配置
 class LevelConfig {
 public:
-    bool initWithFile(const std::string& filename);
+    std::vector<CardConfig> PlayfieldCards; // 主牌堆的牌
+    std::vector<CardConfig> StackCards;     // 备用牌堆的牌
 
-    int getLevelId() const { return _levelId; }
-    const std::string& getLevelName() const { return _levelName; }
-    const std::vector<CardInitData>& getInitialCards() const { return _initialCards; }
-    int getReserveCardCount() const { return _reserveCardCount; }
-
-private:
-    int _levelId = 0;
-    std::string _levelName;
-    std::vector<CardInitData> _initialCards;
-    int _reserveCardCount = 0;
+    bool initWithFile(const std::string& filepath); // 从JSON文件加载
 };
-
-#endif // __LEVEL_CONFIG_H__

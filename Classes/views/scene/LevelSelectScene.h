@@ -2,7 +2,11 @@
 #include "cocos2d.h"
 #include "controllers/LevelSelectController.h" // Ensure this file defines LevelSelectController
 
+
 class LevelSelectController; // Forward declaration to ensure the compiler knows about this class
+class GameScene;
+class GameController;
+
 
 class LevelSelectScene : public cocos2d::Scene {
 public:
@@ -10,8 +14,8 @@ public:
     virtual bool init() override;
 
     void setupUI(); // 初始化UI（暂时留空）
-    //void setupUI(const std::vector<LevelModel*>& levels); // 由控制器调用
+    
 
-private:
+//private:
     LevelSelectController* _controller; // Ensure LevelSelectController is defined
 };

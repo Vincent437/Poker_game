@@ -1,49 +1,21 @@
-#ifndef __GAME_MODEL_H__
-#define __GAME_MODEL_H__
-
+#pragma once
 #include <vector>
-#include <memory>
 #include "CardModel.h"
+#include "configs/models/LevelConfig.h"
 
 class GameModel {
 public:
-    using CardPtr = std::shared_ptr<CardModel>;
-    using CardList = std::vector<CardPtr>;
+    GameModel(const std::vector<CardConfig>& playfield,
+        const std::vector<CardConfig>& stack);
 
-    bool init(int levelId);
+    const std::vector<CardConfig>& getPlayfieldCards() const { return _playfieldCards; }
+    const std::vector<CardConfig>& getStackCards() const { return _stackCards; }
 
-    // 主牌堆
-    const CardList& getPlayFieldCards() const { return _playFieldCards; }
-    void setPlayFieldCards(const CardList& cards) { _playFieldCards = cards; }
-
-    // 底牌堆
-    const CardList& getStackCards() const { return _stackCards; }
-    void addToStack(CardPtr card) { _stackCards.push_back(card); }
-    void removeFromStack() { if (!_stackCards.empty()) _stackCards.pop_back(); }
-    CardPtr getTopStackCard() const { return _stackCards.empty() ? nullptr : _stackCards.back(); }
-
-    // 备用牌堆
-    const CardList& getReserveCards() const { return _reserveCards; }
-    void setReserveCards(const CardList& cards) { _reserveCards = cards; }
-    CardPtr drawReserveCard();
-
-    // 游戏状态
-    bool isGameOver() const { return _isGameOver; }
-    bool isWin() const { return _isWin; }
-
-    void setGameOver(bool isWin) {
-        _isGameOver = true;
-        _isWin = isWin;
-    }
+    // 这里可以添加更多游戏状态管理方法
 
 private:
-    CardList _playFieldCards;   // 主牌堆
-    CardList _stackCards;       // 底牌堆
-    CardList _reserveCards;     // 备用牌堆
+    std::vector<CardConfig> _playfieldCards;
+    std::vector<CardConfig> _stackCards;
 
-    bool _isGameOver = false;
-    bool _isWin = false;
-    int _levelId = 0;
+    // 实际游戏中应该存储CardModel指针，这里简化处理
 };
-
-#endif // __GAME_MODEL_H__

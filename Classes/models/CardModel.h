@@ -8,7 +8,7 @@ public:
 
     CardFaceType getFace() const { return _face; }
     CardSuitType getSuit() const { return _suit; }
-    cocos2d::Vec2 getPosition() const { return _position; }
+    cocos2d::Vec2& getPosition() { return _position; }
     bool isRedSuit() const {
         return _suit == CardSuitType::CST_HEARTS || _suit == CardSuitType::CST_DIAMONDS;
     }

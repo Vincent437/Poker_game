@@ -1,28 +1,21 @@
-#ifndef __UNDO_MANAGER_H__
-#define __UNDO_MANAGER_H__
-
-#include <functional>
-#include <vector>
-#include <memory>
+// managers/UndoManager.h
+#pragma once
+#include "models/UndoModel.h"
+#include "models/CardModel.h"
+#include "models/GameModel.h"
+#include "views/scene/GameScene.h"
 
 class UndoManager {
 public:
-    using UndoAction = std::function<void()>;
-
-    void recordAction(UndoAction undoAction, UndoAction redoAction);
-    bool undo();
-    bool redo();
-    void clear();
+	UndoManager(std::shared_ptr<GameModel> gameModel);
+    void recordMatchAction(CardModel& originalTop,
+        const CardModel& matchedCard,
+        int playfieldIndex);
+    void recordOverrideStackAction(int stackIndex);
+    bool canUndo() const { return !_undoStack.empty(); }
+    void undoLastAction(GameModel& model, GameScene& scene);
 
 private:
-    struct ActionPair {
-        UndoAction undo;
-        UndoAction redo;
-    };
-
-    std::vector<ActionPair> _undoStack;
-    std::vector<ActionPair> _redoStack;
-    size_t _maxSteps = 50; // 最大可撤销步数
+    std::stack<UndoAction> _undoStack;
+	std::shared_ptr<GameModel> _gameModel; // 关联的游戏模型
 };
-
-#endif // __UNDO_MANAGER_H__

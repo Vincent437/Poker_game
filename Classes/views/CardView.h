@@ -6,15 +6,19 @@
 
 class CardView : public cocos2d::Node {
 public:
-    static CardView* create(const CardModel* model);
-    virtual bool init(const CardModel* model);
+    static CardView* create(CardModel* model);
+    virtual bool init(CardModel* model);
 
     void updatePosition();
 
+    const CardModel* getModel();
+    void setClickCallback(const std::function<void()>& callback);
+
 private:
     void setupCardUI();
+    std::function<void()> _clickCallback;
 
-    const CardModel* _model;
+    CardModel* _model;
     cocos2d::Sprite* _baseSprite;
     cocos2d::Sprite* _numberSprite;
     cocos2d::Sprite* _suitSprite;

@@ -1,7 +1,7 @@
 // Classes/views/CardView.cpp
 #include "CardView.h"
 
-CardView* CardView::create(const CardModel* model) {
+CardView* CardView::create(CardModel* model) {
     CardView* ret = new CardView();
     if (ret && ret->init(model)) {
         ret->autorelease();
@@ -11,12 +11,26 @@ CardView* CardView::create(const CardModel* model) {
     return nullptr;
 }
 
-bool CardView::init(const CardModel* model) {
+bool CardView::init(CardModel* model) {
     if (!Node::init()) return false;
 
     _model = model;
     setupCardUI();
     updatePosition();
+    this->setAnchorPoint(cocos2d:: Vec2::ANCHOR_BOTTOM_LEFT);
+    auto listener = cocos2d::EventListenerTouchOneByOne::create();
+    listener->setSwallowTouches(true);
+    listener->onTouchBegan = [this](cocos2d::Touch* touch, cocos2d::Event*) {
+        auto localPos = this->convertToNodeSpace(touch->getLocation());
+        if (cocos2d::Rect(0, 0, this->getContentSize().width, this->getContentSize().height).containsPoint(localPos)) {
+        //if (this->getBoundingBox().containsPoint(this->convertToNodeSpace(touch->getLocation()))) {
+            if (_clickCallback) _clickCallback();
+            return true;
+        }
+        return false;
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
 
     return true;
 }
@@ -30,7 +44,6 @@ void CardView::setupCardUI() {
 
     // 设置卡牌大小 (假设底图大小为100x150)
     auto cardSize = _baseSprite->getContentSize();
-    this->setContentSize(cardSize);
 
     // 创建数字和花色 (这里简化处理，实际应根据卡牌面值调整位置)
     _numberSprite = cocos2d::Sprite::create(resConfig->getNumberPath(_model->getFace(), _model->isRedSuit()));
@@ -48,20 +61,18 @@ void CardView::setupCardUI() {
     _suitSprite->setPosition(suitX, suitY);
     this->addChild(_suitSprite);
 
-    //// 右下角也添加数字和花色 (简化处理)
-    //auto number2 = cocos2d::Sprite::create(resConfig->getNumberTexturePath(_model->getFace(), isRed));
-    //number2->setPosition(this->getContentSize().width * 0.7f,
-    //    this->getContentSize().height * 0.3f);
-    //number2->setRotation(180);
-    //this->addChild(number2);
-
-    //auto suit2 = cocos2d::Sprite::create(resConfig->getSuitTexturePath(_model->getSuit(), isRed));
-    //suit2->setPosition(this->getContentSize().width * 0.7f,
-    //    this->getContentSize().height * 0.15f);
-    //suit2->setRotation(180);
-    //this->addChild(suit2);
+    this->setContentSize(cardSize);  // 确保节点尺寸与精灵一致
 }
 
 void CardView::updatePosition() {
-    this->setPosition(_model->getPosition().x, _model->getPosition().y + 300);
+    //_model->getPosition().y += 300;
+    this->setPosition(_model->getPosition().x, _model->getPosition().y);
+}
+
+const CardModel* CardView::getModel() {
+    return _model;
+}
+
+void CardView::setClickCallback(const std::function<void()>& callback) {
+    _clickCallback = callback;
 }
